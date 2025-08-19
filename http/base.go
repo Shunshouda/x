@@ -30,12 +30,20 @@ type baseXmlResponse[T any] struct {
 
 // JsonBaseResponse writes v into w with http.StatusOK.
 func JsonBaseResponse(w http.ResponseWriter, v any) {
-	httpx.OkJson(w, wrapBaseResponse(v))
+	if _, ok := v.(interface{ SkipWrap() }) {
+		httpx.OkJson(w, v)
+	} else {
+		httpx.OkJson(w, wrapBaseResponse(v))
+	}
 }
 
 // JsonBaseResponseCtx writes v into w with http.StatusOK.
 func JsonBaseResponseCtx(ctx context.Context, w http.ResponseWriter, v any) {
-	httpx.OkJsonCtx(ctx, w, wrapBaseResponse(v))
+	if _, ok := v.(interface{ SkipWrap() }) {
+		httpx.OkJsonCtx(ctx, w, v)
+	} else {
+		httpx.OkJsonCtx(ctx, w, wrapBaseResponse(v))	
+	}
 }
 
 // XmlBaseResponse writes v into w with http.StatusOK.
@@ -74,7 +82,7 @@ func wrapBaseResponse(v any) BaseResponse[any] {
 		resp.Msg = data.GRPCStatus().Message()
 	case error:
 		resp.Code = BusinessCodeError
-		resp.Msg = data.Error()
+		resp.Msg = data.Error()			
 	default:
 		resp.Code = BusinessCodeOK
 		resp.Msg = BusinessMsgOk
