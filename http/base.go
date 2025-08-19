@@ -30,7 +30,7 @@ type baseXmlResponse[T any] struct {
 
 // JsonBaseResponse writes v into w with http.StatusOK.
 func JsonBaseResponse(w http.ResponseWriter, v any) {
-	if _, ok := v.(interface{ SkipWrap() }) {
+	if _, ok := v.(interface{ SkipWrap() }); ok {
 		httpx.OkJson(w, v)
 	} else {
 		httpx.OkJson(w, wrapBaseResponse(v))
@@ -39,7 +39,7 @@ func JsonBaseResponse(w http.ResponseWriter, v any) {
 
 // JsonBaseResponseCtx writes v into w with http.StatusOK.
 func JsonBaseResponseCtx(ctx context.Context, w http.ResponseWriter, v any) {
-	if _, ok := v.(interface{ SkipWrap() }) {
+	if _, ok := v.(interface{ SkipWrap() }); ok {
 		httpx.OkJsonCtx(ctx, w, v)
 	} else {
 		httpx.OkJsonCtx(ctx, w, wrapBaseResponse(v))	
